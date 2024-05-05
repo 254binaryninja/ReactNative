@@ -1,118 +1,70 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React,{useState} from 'react';
+import {StyleSheet, Text, View,FlatList} from 'react-native';
+import Header from './components/header';
+import Todo from './components/todoitem';
+import Add from './components/addtodo';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+ function App () {
+   const [todo,setTodo] = useState([
+    {text:'buy coffee',key:'1'},
+    {text:'create an app',key:'2'},
+    {text:'play on the switch',key:'3'},
+   ])
+   const [action,setAction] = useState('');
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+   const changeHandler = (inputText :string) => {
+    setAction(inputText);
+} 
+     const pressHandler = (key : string) => {
+     setTodo ((prevTodo)=>{
+       return prevTodo.filter(todo => todo.key != key )
+     })
+     }
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+     const submitHandler = (action : string) => {
+      setTodo((prevTodo) => {
+        return [
+          {text : action , key : Math.random().toString()},
+          ...prevTodo
+        ]
+        console.log(action)
+        
+      })
+     }
+  
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.container}> 
+      <Header/>
+    <View style={styles.content}>
+      <Add submitHandler={submitHandler}/>
+      <View style={styles.list}>
+         <FlatList
+         data={todo}
+         renderItem={({item})=>(
+         <Todo item={item} pressHandler={pressHandler}/>
+         )}
+         />
+      </View>
+      </View>      
     </View>
   );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text>Change text here to the
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex:1,
+    //backgroundColor:'#fff',
+   
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  content:{
+    padding:40,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+  list:{
+    marginTop:20,
+    
+  }
+  
+  
 });
 
 export default App;
